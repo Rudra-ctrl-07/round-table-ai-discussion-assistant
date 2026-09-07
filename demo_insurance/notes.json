@@ -1,0 +1,46 @@
+{
+  "purpose": "Insurance for tomorrow's live demo. If OpenRouter is flaky live, show these from /history instead of gambling on a fresh run.",
+  "how_to_pull": [
+    "curl http://127.0.0.1:8000/history?limit=50",
+    "Find rows whose 'id' is in this index.",
+    "Each row has final_document_1, final_document_2, moderator_analysis already populated as plain text — paste straight into the demo UI or your slides."
+  ],
+  "demo_picker": [
+    "Q1 microservices-vs-monoliths (qid 30): broad technical trade-off, good opener.",
+    "Q2 kubernetes-year-one (qid 31): concrete infrastructure decision, practical.",
+    "Q3 b2b-saas-pricing (qid 33): goes outside pure tech into business strategy, shows the round table works on non-engineering questions too."
+  ],
+  "runs": [
+    {
+      "question": "What are the tradeoffs between microservices and monoliths for a 10-person startup?",
+      "query_id": 30,
+      "wall_seconds": 62.2,
+      "used_fallback": false,
+      "first_line_preview": "**Tradeoffs Between Microservices and Monoliths for a 10‑Person Startup**",
+      "final_document_1_length": 3745,
+      "final_document_2_length": 1186,
+      "moderator_analysis_length": 1593
+    },
+    {
+      "question": "Should a small team adopt Kubernetes in year one, or wait until they actually need it?",
+      "query_id": 31,
+      "wall_seconds": 47.8,
+      "used_fallback": false,
+      "first_line_preview": "For a small team, the default stance in year 1 should be to **wait** to adopt Kubernetes until the workload or organizational needs actually justify its use. Adopt Kubernetes early only if the team al",
+      "final_document_1_length": 1089,
+      "final_document_2_length": 3550,
+      "moderator_analysis_length": 1037
+    },
+    {
+      "question": "What is the best way for an early-stage B2B SaaS startup to price its first product?",
+      "query_id": 33,
+      "wall_seconds": 81.8,
+      "used_fallback": false,
+      "replaced_fallback": true,
+      "first_line_preview": "**Pricing the First Product for an Early‑Stage B2B SaaS Startup**",
+      "final_document_1_length": 2325,
+      "final_document_2_length": 5611,
+      "moderator_analysis_length": 1581
+    }
+  ]
+}

@@ -1,0 +1,29 @@
+# Environment / secrets — never commit real keys
+.env
+.env.*
+!.env.example
+
+# Databases
+*.db
+*.sqlite
+*.sqlite3
+
+# Python
+__pycache__/
+*.py[cod]
+.pytest_cache/
+.mypy_cache/
+venv/
+.venv/
+
+# Agent / editor scratch
+.planning/
+.claude/
+.vscode/
+.idea/
+
+# OS junk
+.DS_Store
+Thumbs.db
+# Agent scratch
+.planning/

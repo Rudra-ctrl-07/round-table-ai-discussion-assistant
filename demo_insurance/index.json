@@ -1,0 +1,21 @@
+[
+  {
+    "question": "What are the tradeoffs between microservices and monoliths for a 10-person startup?",
+    "query_id": 30,
+    "wall_seconds": 62.2,
+    "used_fallback": false
+  },
+  {
+    "question": "Should a small team adopt Kubernetes in year one, or wait until they actually need it?",
+    "query_id": 31,
+    "wall_seconds": 47.8,
+    "used_fallback": false
+  },
+  {
+    "question": "What is the best way for an early-stage B2B SaaS startup to price its first product?",
+    "query_id": 33,
+    "wall_seconds": 81.8,
+    "used_fallback": false,
+    "replaced_fallback": true
+  }
+]

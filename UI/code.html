@@ -1,0 +1,474 @@
+<!DOCTYPE html>
+<html class="light" lang="en">
+<head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Round Table | Multi-Agent Research Platform</title>
+<!-- Tailwind CSS -->
+<script src="https://cdn.tailwindcss.com?plugins=forms,typography,container-queries"></script>
+<!-- Marked JS for Markdown Parsing -->
+<script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
+<!-- Google Fonts -->
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500&family=Playfair+Display:ital,wght@0,400..900;1,400..900&display=swap" rel="stylesheet"/>
+<!-- Material Symbols -->
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+    tailwind.config = {
+        darkMode: "class",
+        theme: {
+            extend: {
+                colors: {
+                    "surface-tint": "#4f6073",
+                    "surface-container-high": "#e1e8fd",
+                    "inverse-primary": "#b7c8de",
+                    "outline-variant": "#c4c6cd",
+                    "secondary-container": "#dce0e4",
+                    "on-surface": "#141b2b",
+                    "on-error-container": "#93000a",
+                    "on-tertiary": "#ffffff",
+                    "secondary": "#5a5f62",
+                    "outline": "#74777d",
+                    "error-container": "#ffdad6",
+                    "surface": "#f9f9ff",
+                    "surface-dim": "#d3daef",
+                    "primary": "#041627",
+                    "primary-container": "#1a2b3c",
+                    "background": "#f9f9ff",
+                },
+                borderRadius: {
+                    "DEFAULT": "0.25rem",
+                    "lg": "0.5rem",
+                    "xl": "0.75rem",
+                    "2xl": "1rem",
+                    "3xl": "1.5rem",
+                    "full": "9999px"
+                },
+                fontFamily: {
+                    "serif": ["Playfair Display", "serif"],
+                    "sans": ["Inter", "sans-serif"],
+                    "mono": ["JetBrains Mono", "monospace"]
+                }
+            }
+        }
+    }
+</script>
+<style>
+    body {
+        background-color: #f9f9ff;
+        color: #141b2b;
+        font-family: 'Inter', sans-serif;
+        overflow-x: hidden;
+    }
+
+    .material-symbols-outlined {
+        font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        vertical-align: middle;
+    }
+
+    .query-input:focus {
+        outline: none;
+        box-shadow: none;
+    }
+
+    .bg-gradient-subtle {
+        background: linear-gradient(135deg, #f9f9ff 0%, #eef1f8 100%);
+    }
+
+    .glass-panel {
+        background: rgba(255, 255, 255, 0.65);
+        backdrop-filter: blur(16px);
+        -webkit-backdrop-filter: blur(16px);
+        border: 1px solid rgba(255, 255, 255, 0.85);
+        box-shadow: 0 10px 40px -10px rgba(4, 22, 39, 0.06);
+    }
+
+    .fade-in {
+        animation: fadeIn 0.6s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+    }
+
+    @keyframes fadeIn {
+        from { opacity: 0; transform: translateY(12px); }
+        to { opacity: 1; transform: translateY(0); }
+    }
+
+    /* Formatted Markdown styling */
+    .prose h1, .prose h2, .prose h3, .prose h4 {
+        color: #041627;
+        font-weight: 600;
+        margin-top: 1.2em;
+        margin-bottom: 0.6em;
+    }
+    .prose h1 { font-size: 1.6em; }
+    .prose h2 { font-size: 1.3em; }
+    .prose h3 { font-size: 1.1em; }
+    .prose p { margin-bottom: 1em; line-height: 1.7; }
+    .prose ul { list-style-type: disc; padding-left: 1.4em; margin-bottom: 1em; }
+    .prose ol { list-style-type: decimal; padding-left: 1.4em; margin-bottom: 1em; }
+    .prose li { margin-bottom: 0.3em; }
+    .prose code { background: rgba(4, 22, 39, 0.05); padding: 0.15em 0.35em; border-radius: 0.2em; font-family: 'JetBrains Mono', monospace; font-size: 0.9em; }
+    .prose pre { background: #041627; color: #e1e8fd; padding: 1em; border-radius: 0.5rem; overflow-x: auto; font-family: 'JetBrains Mono', monospace; }
+    .prose blockquote { border-left: 3px solid #4f6073; padding-left: 1em; color: #44474c; font-style: italic; margin-bottom: 1em; }
+</style>
+</head>
+<body class="bg-gradient-subtle text-on-surface min-h-screen flex flex-col">
+
+<!-- Top Navigation Bar -->
+<header class="fixed top-0 left-0 right-0 z-40 bg-white/40 backdrop-blur-md border-b border-white/60">
+    <div class="flex justify-between items-center w-full px-6 md:px-12 h-20 max-w-7xl mx-auto">
+        <div class="flex items-center gap-3">
+            <span class="material-symbols-outlined text-primary text-3xl">groups</span>
+            <span class="font-serif text-2xl md:text-3xl font-bold text-primary tracking-tight">Round Table</span>
+            <span class="text-xs bg-primary/10 text-primary font-medium px-2.5 py-1 rounded-full uppercase tracking-wider">Multi-Agent</span>
+        </div>
+        <div class="flex items-center gap-4">
+            <button id="toggle-history-btn" class="flex items-center gap-2 text-sm font-semibold text-primary hover:bg-white/80 px-4 py-2 rounded-full transition-all border border-outline-variant/30">
+                <span class="material-symbols-outlined text-xl">history</span>
+                <span>Past Research</span>
+            </button>
+        </div>
+    </div>
+</header>
+
+<!-- Main Container -->
+<main class="flex-grow flex flex-col items-center justify-center pt-28 pb-16 px-4 md:px-8">
+    <div class="flex flex-col items-center w-full max-w-4xl mx-auto fade-in gap-10">
+        
+        <!-- Header Prompt -->
+        <div class="text-center w-full space-y-3">
+            <h1 class="font-serif text-4xl md:text-5xl text-primary font-medium tracking-tight">What do you want researched?</h1>
+            <p class="text-base text-secondary max-w-xl mx-auto">
+                Convene 3 autonomous AI models in parallel with real-time Tavily search integration and synthesized decision consensus.
+            </p>
+        </div>
+
+        <!-- Query Input Card -->
+        <div class="w-full glass-panel rounded-3xl p-4 md:p-6 transition-all duration-300">
+            <textarea id="query-input" class="query-input w-full min-h-[120px] text-lg md:text-xl bg-transparent resize-none text-on-surface placeholder:text-outline-variant/70 border-none p-0 focus:ring-0" placeholder="Ask a deep technical, market, or strategic question..."></textarea>
+            
+            <div class="mt-6 flex flex-wrap items-center justify-between gap-4 pt-4 border-t border-outline-variant/30">
+                <div class="flex items-center gap-3">
+                    <span class="inline-flex items-center gap-1.5 text-xs font-medium text-secondary bg-surface-container-high/60 px-3 py-1.5 rounded-full">
+                        <span class="material-symbols-outlined text-sm">bolt</span> 3 Concurrent Models
+                    </span>
+                    <span class="inline-flex items-center gap-1.5 text-xs font-medium text-secondary bg-surface-container-high/60 px-3 py-1.5 rounded-full">
+                        <span class="material-symbols-outlined text-sm">search</span> Tavily Web Search
+                    </span>
+                </div>
+
+                <div class="flex items-center gap-4">
+                    <button id="submit-btn" class="group flex items-center gap-2.5 bg-primary text-white px-7 py-3.5 rounded-full text-base font-semibold shadow-lg hover:shadow-xl hover:-translate-y-0.5 transition-all duration-300 active:scale-95">
+                        <span>Submit Request</span>
+                        <span class="material-symbols-outlined text-xl transition-transform duration-300 group-hover:translate-x-1">arrow_forward</span>
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Loading Indicator -->
+        <div id="loading" class="hidden w-full glass-panel rounded-2xl p-6 text-center space-y-3 fade-in">
+            <div class="flex justify-center items-center gap-3 text-primary font-medium text-lg">
+                <span class="material-symbols-outlined animate-spin text-2xl">progress_activity</span>
+                <span>The Round Table is convening...</span>
+            </div>
+            <p class="text-sm text-secondary">Gathering web search context and running 3 parallel LLM reasoning seats.</p>
+        </div>
+
+        <!-- Error Banner -->
+        <div id="error" class="hidden w-full bg-error-container text-on-error-container rounded-2xl p-4 border border-error/30 fade-in" role="alert">
+            <div class="flex items-center gap-2">
+                <span class="material-symbols-outlined text-xl">error</span>
+                <strong class="font-semibold">Request failed:</strong>
+                <span id="error-message"></span>
+            </div>
+        </div>
+
+        <!-- Results Output Area -->
+        <section id="results" class="w-full hidden flex-col gap-6 fade-in">
+            
+            <!-- Navigation Tabs -->
+            <div class="flex border-b border-outline-variant/40 gap-4">
+                <button id="tab-doc1" class="tab-btn pb-3 text-base font-semibold text-primary border-b-2 border-primary transition-colors flex items-center gap-2">
+                    <span class="material-symbols-outlined text-xl">verified</span> Polished Answer (Doc 1)
+                </button>
+                <button id="tab-doc2" class="tab-btn pb-3 text-base font-medium text-secondary border-b-2 border-transparent hover:text-primary transition-colors flex items-center gap-2">
+                    <span class="material-symbols-outlined text-xl">receipt_long</span> Audit Trail & Seats (Doc 2)
+                </button>
+                <button id="tab-sources" class="tab-btn pb-3 text-base font-medium text-secondary border-b-2 border-transparent hover:text-primary transition-colors flex items-center gap-2">
+                    <span class="material-symbols-outlined text-xl">travel_explore</span> Search Sources
+                </button>
+            </div>
+
+            <!-- Panel 1: Document 1 -->
+            <article id="panel-doc1" class="glass-panel rounded-3xl p-6 md:p-8 space-y-4">
+                <div class="flex justify-between items-center border-b border-outline-variant/30 pb-3">
+                    <h2 class="font-serif text-2xl text-primary font-semibold">Document 1 — Polished Answer</h2>
+                    <button class="copy-btn flex items-center gap-1.5 text-xs font-semibold text-secondary hover:text-primary transition-colors px-3 py-1.5 rounded-lg border border-outline-variant/40" data-target="document-1-raw">
+                        <span class="material-symbols-outlined text-base">content_copy</span> Copy
+                    </button>
+                </div>
+                <div id="document-1-parsed" class="prose max-w-none text-on-surface"></div>
+                <div id="document-1-raw" class="hidden"></div>
+            </article>
+
+            <!-- Panel 2: Document 2 -->
+            <article id="panel-doc2" class="glass-panel rounded-3xl p-6 md:p-8 space-y-4 hidden">
+                <div class="flex justify-between items-center border-b border-outline-variant/30 pb-3">
+                    <h2 class="font-serif text-2xl text-primary font-semibold">Document 2 — Audit Trail & Model Responses</h2>
+                    <button class="copy-btn flex items-center gap-1.5 text-xs font-semibold text-secondary hover:text-primary transition-colors px-3 py-1.5 rounded-lg border border-outline-variant/40" data-target="document-2-raw">
+                        <span class="material-symbols-outlined text-base">content_copy</span> Copy
+                    </button>
+                </div>
+                <div id="document-2-parsed" class="prose max-w-none text-on-surface"></div>
+                <div id="document-2-raw" class="hidden"></div>
+            </article>
+
+            <!-- Panel 3: Sources -->
+            <article id="panel-sources" class="glass-panel rounded-3xl p-6 md:p-8 space-y-4 hidden">
+                <h2 class="font-serif text-2xl text-primary font-semibold border-b border-outline-variant/30 pb-3">Retrieved Web Search Sources</h2>
+                <div id="sources-list" class="space-y-4">
+                    <p class="text-sm text-secondary italic">No web search sources retrieved or displayable for this query.</p>
+                </div>
+            </article>
+        </section>
+    </div>
+</main>
+
+<!-- History Slide-over Drawer -->
+<div id="history-drawer" class="fixed inset-0 z-50 hidden bg-primary/20 backdrop-blur-xs transition-opacity">
+    <div class="absolute right-0 top-0 bottom-0 w-full max-w-md bg-white shadow-2xl p-6 flex flex-col justify-between overflow-y-auto">
+        <div class="space-y-6">
+            <div class="flex justify-between items-center border-b border-outline-variant/30 pb-4">
+                <div class="flex items-center gap-2">
+                    <span class="material-symbols-outlined text-primary">history</span>
+                    <h3 class="font-serif text-xl font-bold text-primary">Research History</h3>
+                </div>
+                <button id="close-history-btn" class="text-secondary hover:text-primary p-1 rounded-full">
+                    <span class="material-symbols-outlined">close</span>
+                </button>
+            </div>
+            <div id="history-items" class="space-y-3">
+                <p class="text-sm text-secondary">Loading past queries...</p>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    // Auto-resize textarea
+    const textarea = document.getElementById('query-input');
+    textarea.addEventListener('input', function() {
+        this.style.height = 'auto';
+        this.style.height = (this.scrollHeight) + 'px';
+    });
+</script>
+
+<script>
+    (function () {
+        // Base API URL (relative if served by FastAPI, absolute fallback for local files)
+        const API_BASE = window.location.origin.startsWith("http") && !window.location.origin.includes("file:") 
+            ? window.location.origin 
+            : "http://127.0.0.1:8000";
+
+        const $ = (id) => document.getElementById(id);
+        const input       = $("query-input");
+        const submitBtn   = $("submit-btn");
+        const loading     = $("loading");
+        const errorBox    = $("error");
+        const errorMsg    = $("error-message");
+        const results     = $("results");
+        
+        const doc1Parsed  = $("document-1-parsed");
+        const doc1Raw     = $("document-1-raw");
+        const doc2Parsed  = $("document-2-parsed");
+        const doc2Raw     = $("document-2-raw");
+        const sourcesList = $("sources-list");
+
+        const tabDoc1     = $("tab-doc1");
+        const tabDoc2     = $("tab-doc2");
+        const tabSources  = $("tab-sources");
+        const panelDoc1   = $("panel-doc1");
+        const panelDoc2   = $("panel-doc2");
+        const panelSources= $("panel-sources");
+
+        const historyDrawer = $("history-drawer");
+        const toggleHistory = $("toggle-history-btn");
+        const closeHistory  = $("close-history-btn");
+        const historyItems  = $("history-items");
+
+        // Tab Switching Logic
+        function switchTab(activeTab, activePanel) {
+            [tabDoc1, tabDoc2, tabSources].forEach(t => {
+                t.classList.remove("text-primary", "border-primary", "font-semibold");
+                t.classList.add("text-secondary", "border-transparent", "font-medium");
+            });
+            [panelDoc1, panelDoc2, panelSources].forEach(p => p.classList.add("hidden"));
+
+            activeTab.classList.remove("text-secondary", "border-transparent", "font-medium");
+            activeTab.classList.add("text-primary", "border-primary", "font-semibold");
+            activePanel.classList.remove("hidden");
+        }
+
+        tabDoc1.addEventListener("click", () => switchTab(tabDoc1, panelDoc1));
+        tabDoc2.addEventListener("click", () => switchTab(tabDoc2, panelDoc2));
+        tabSources.addEventListener("click", () => switchTab(tabSources, panelSources));
+
+        // Copy functionality
+        document.querySelectorAll(".copy-btn").forEach(btn => {
+            btn.addEventListener("click", () => {
+                const targetId = btn.getAttribute("data-target");
+                const text = $(targetId).textContent;
+                navigator.clipboard.writeText(text).then(() => {
+                    btn.innerHTML = `<span class="material-symbols-outlined text-base text-green-600">check</span> Copied!`;
+                    setTimeout(() => {
+                        btn.innerHTML = `<span class="material-symbols-outlined text-base">content_copy</span> Copy`;
+                    }, 2000);
+                });
+            });
+        });
+
+        // History Drawer Toggle
+        toggleHistory.addEventListener("click", () => {
+            historyDrawer.classList.remove("hidden");
+            loadHistory();
+        });
+        closeHistory.addEventListener("click", () => historyDrawer.classList.add("hidden"));
+
+        function setLoading(on) {
+            submitBtn.disabled = on;
+            input.disabled = on;
+            submitBtn.classList.toggle("opacity-60", on);
+            submitBtn.classList.toggle("cursor-not-allowed", on);
+            loading.classList.toggle("hidden", !on);
+        }
+
+        function showError(text) {
+            errorMsg.textContent = text;
+            errorBox.classList.remove("hidden");
+        }
+
+        function clearError() {
+            errorBox.classList.add("hidden");
+            errorMsg.textContent = "";
+        }
+
+        function renderMarkdown(el, markdownText) {
+            if (window.marked) {
+                el.innerHTML = marked.parse(markdownText || "");
+            } else {
+                el.textContent = markdownText || "";
+            }
+        }
+
+        function renderSources(sources) {
+            if (!sources || !sources.length) {
+                sourcesList.innerHTML = `<p class="text-sm text-secondary italic">No web search sources retrieved for this query.</p>`;
+                return;
+            }
+            sourcesList.innerHTML = sources.map((s, idx) => `
+                <div class="p-4 rounded-xl bg-white/70 border border-outline-variant/30 space-y-1">
+                    <div class="flex items-center gap-2">
+                        <span class="text-xs font-bold text-primary bg-primary/10 px-2 py-0.5 rounded">[${idx+1}]</span>
+                        <a href="${s.link || '#'}" target="_blank" class="font-semibold text-primary hover:underline">${s.title || 'Untitled Source'}</a>
+                    </div>
+                    <p class="text-sm text-on-surface-variant">${s.snippet || ''}</p>
+                    ${s.link ? `<a href="${s.link}" target="_blank" class="text-xs text-surface-tint hover:underline break-all">${s.link}</a>` : ''}
+                </div>
+            `).join('');
+        }
+
+        async function submitQuery() {
+            const user_input = input.value.trim();
+            clearError();
+            if (!user_input) {
+                showError("Please enter a question before submitting.");
+                return;
+            }
+            setLoading(true);
+            try {
+                const res = await fetch(API_BASE + "/query", {
+                    method: "POST",
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify({ user_input: user_input }),
+                });
+                if (!res.ok) {
+                    const body = await res.text();
+                    throw new Error("Server returned " + res.status + ": " + (body || "(no body)"));
+                }
+                const data = await res.json();
+                
+                doc1Raw.textContent = data.document_1 || "";
+                doc2Raw.textContent = data.document_2 || "";
+                renderMarkdown(doc1Parsed, data.document_1 || "");
+                renderMarkdown(doc2Parsed, data.document_2 || "");
+
+                results.classList.remove("hidden");
+                results.classList.add("flex");
+                switchTab(tabDoc1, panelDoc1);
+
+                // Reload history after query finishes
+                loadHistory();
+            } catch (err) {
+                const msg = err && err.message ? err.message : String(err);
+                showError(msg + " (Is backend running at " + API_BASE + "?)");
+            } finally {
+                setLoading(false);
+            }
+        }
+
+        async function loadHistory() {
+            try {
+                const res = await fetch(API_BASE + "/history");
+                if (!res.ok) return;
+                const rows = await res.json();
+                if (!rows || !rows.length) {
+                    historyItems.innerHTML = `<p class="text-sm text-secondary">No past queries yet.</p>`;
+                    return;
+                }
+                historyItems.innerHTML = rows.map(r => `
+                    <div class="p-3.5 rounded-xl border border-outline-variant/30 hover:border-primary/40 cursor-pointer bg-white/60 transition-all space-y-1 history-card" data-id="${r.id}">
+                        <p class="font-medium text-sm text-primary line-clamp-2">${r.user_input}</p>
+                        <p class="text-xs text-secondary">${new Date(r.created_at).toLocaleString()}</p>
+                    </div>
+                `).join('');
+
+                document.querySelectorAll(".history-card").forEach((card, idx) => {
+                    card.addEventListener("click", () => {
+                        const row = rows[idx];
+                        input.value = row.user_input;
+                        doc1Raw.textContent = row.final_document_1 || "";
+                        doc2Raw.textContent = row.final_document_2 || "";
+                        renderMarkdown(doc1Parsed, row.final_document_1 || "");
+                        renderMarkdown(doc2Parsed, row.final_document_2 || "");
+
+                        try {
+                            const parsedSources = JSON.parse(row.search_results || "[]");
+                            renderSources(parsedSources);
+                        } catch (e) {
+                            renderSources([]);
+                        }
+
+                        results.classList.remove("hidden");
+                        results.classList.add("flex");
+                        switchTab(tabDoc1, panelDoc1);
+                        historyDrawer.classList.add("hidden");
+                    });
+                });
+            } catch (e) {
+                historyItems.innerHTML = `<p class="text-sm text-error">Failed to load history.</p>`;
+            }
+        }
+
+        submitBtn.addEventListener("click", submitQuery);
+        input.addEventListener("keydown", function (e) {
+            if ((e.metaKey || e.ctrlKey) && e.key === "Enter") {
+                e.preventDefault();
+                submitQuery();
+            }
+        });
+
+        // Preload history on load
+        loadHistory();
+    })();
+</script>
+</body>
+</html>
