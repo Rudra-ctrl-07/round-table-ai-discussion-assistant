@@ -1,5 +1,7 @@
 # RT — Round Table
 
+[![CI](https://github.com/Rudra-ctrl-07/round-table-ai-discussion-assistant/actions/workflows/ci.yml/badge.svg)](https://github.com/Rudra-ctrl-07/round-table-ai-discussion-assistant/actions/workflows/ci.yml)
+
 A personal assistant backend with a lightweight UI.
 
 ## Structure
